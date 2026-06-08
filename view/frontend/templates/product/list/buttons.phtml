@@ -25,7 +25,7 @@ $productId = $product->getId();
 $productName = $product->getName();
 ?>
 
-<!-- Quick View Button — uses native onclick to bypass Alpine scope issues -->
+<!-- Quick View Button - uses native onclick to bypass Alpine scope issues -->
 <button type="button"
         onclick="event.preventDefault(); event.stopPropagation(); window.dispatchEvent(new CustomEvent('open-quick-view', {detail:{productId:<?= (int)$productId ?>}})); return false;"
         aria-label="<?= $escaper->escapeHtmlAttr(__('Quick View') . ' ' . $productName) ?>"

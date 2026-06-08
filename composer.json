@@ -2,7 +2,7 @@
     "name": "mage2kishan/module-quickview",
     "description": "Smart Quick View & Compare module for Magento 2 with Hyva theme support. Features: Quick View Modal, Product Comparison, Recently Viewed Products",
     "type": "magento2-module",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "license": [
         "proprietary"
     ],
