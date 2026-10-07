@@ -1,0 +1,515 @@
+<?php
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * View Tracker Detail Template
+ *
+ * @var $block \Panth\QuickView\Block\Adminhtml\ViewTracker
+ */
+
+$viewId = $block->getRequest()->getParam('id');
+$viewRecord = $block->getView($viewId);
+
+if (!$viewRecord) {
+    echo '<p>View record not found.</p>';
+    return;
+}
+
+$productInfo = $block->getProductInfo($viewRecord->getProductId());
+$customerInfo = $block->getCustomerInfo($viewRecord->getCustomerId());
+$productHistory = $block->getProductViewHistory($viewRecord->getProductId(), 10);
+
+$viewerName = 'Guest';
+$viewerType = 'guest';
+if ($viewRecord->getCustomerId()) {
+    $viewerName = $customerInfo ? $customerInfo['name'] : 'Unknown Customer';
+    $viewerType = 'customer';
+} elseif ($viewRecord->getVisitorId()) {
+    $viewerName = 'Visitor #' . substr($viewRecord->getVisitorId(), 0, 8);
+    $viewerType = 'visitor';
+}
+?>
+
+<style>
+    .view-detail-container {
+        font-family: inherit;
+        background: #f8f8f8;
+        padding: 32px;
+        min-height: 100vh;
+    }
+
+    .detail-header {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .detail-header h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #303030;
+        margin: 0;
+    }
+
+    .back-button {
+        background: #e3e3e3;
+        color: #514943;
+        border: 1px solid #adadad;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: inline-block;
+    }
+
+    .back-button:hover {
+        transform: none;
+        box-shadow: none;
+        background: #dadada;
+        color: #514943;
+        text-decoration: none;
+    }
+
+    .qvt-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    @media (max-width: 1200px) {
+        .qvt-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .detail-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    }
+
+    .qvt-card-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0 0 24px 0;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f3f4f6;
+        display: flex;
+        align-items: center;
+    }
+
+    .card-icon {
+        font-size: 28px;
+        margin-right: 12px;
+    }
+
+    .product-showcase {
+        display: flex;
+        gap: 32px;
+        margin-bottom: 32px;
+    }
+
+    .product-image {
+        flex-shrink: 0;
+    }
+
+    .product-image img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #f3f4f6;
+    }
+
+    .product-details {
+        flex: 1;
+    }
+
+    .detail-row {
+        margin-bottom: 24px;
+    }
+
+    .detail-label {
+        color: #6b7280;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+    }
+
+    .detail-value {
+        overflow-wrap: anywhere;
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .detail-value.large {
+        font-size: 24px;
+        font-weight: 700;
+        color: #303030;
+    }
+
+    .detail-link {
+        color: #006bb4;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .detail-link:hover {
+        color: #004d82;
+        text-decoration: underline;
+    }
+
+    .qvt-badge {
+        display: inline-block;
+        background: #f1f1f1;
+        color: #41362f;
+        border: 1px solid #d6d6d6;
+        padding: 6px 12px;
+        border-radius: 9999px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .qvt-badge.success {
+        background: #d0e5a9;
+        border-color: #5b8116;
+        color: #185b00;
+    }
+
+    .qvt-badge.warning {
+        background: #fffbbb;
+        border-color: #e1cd00;
+        color: #6f4400;
+    }
+
+    .qvt-badge.info {
+        background: #e5f7fe;
+        border-color: #79a7c4;
+        color: #00699d;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+        padding: 24px;
+        border-radius: 12px;
+        border: 2px solid #f3f4f6;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-box:hover {
+        transform: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .qvt-timeline {
+        position: relative;
+        padding-left: 32px;
+    }
+
+    .qvt-timeline::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e3e3e3;
+    }
+
+    .view-detail-container .qvt-timeline-item {
+        position: relative;
+        padding-bottom: 16px;
+    }
+
+    .qvt-timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .qvt-timeline-dot {
+        position: absolute;
+        left: -24px;
+        top: 4px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid #eb5202;
+        box-shadow: none;
+    }
+
+    .qvt-timeline-content {
+        background: #f9fafb;
+        padding: 16px;
+        border-radius: 8px;
+        border-left: 3px solid #eb5202;
+    }
+
+    .qvt-timeline-title {
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+    }
+
+    .qvt-timeline-meta {
+        color: #6b7280;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .qvt-empty {
+        text-align: center;
+        padding: 48px 16px;
+        color: #6b7280;
+    }
+
+    .qvt-full {
+        grid-column: 1 / -1;
+    }
+</style>
+
+<div class="view-detail-container">
+    <!-- Header -->
+    <div class="detail-header">
+        <a href="<?= $escaper->escapeUrl($block->getUrl('quickview/viewtracker/index')) ?>" class="back-button">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Product Information -->
+    <?php if ($productInfo): ?>
+    <div class="qvt-grid">
+        <div class="detail-card qvt-full">
+            <h2 class="qvt-card-title">
+                Product Information
+            </h2>
+
+            <div class="product-showcase">
+                <div class="product-image">
+                    <img src="<?= $escaper->escapeUrl($productInfo['image']) ?>"
+                         alt="<?= $escaper->escapeHtmlAttr($productInfo['name']) ?>">
+                </div>
+
+                <div class="product-details">
+                    <div class="detail-row">
+                        <p class="detail-label">Product Name</p>
+                        <p class="detail-value large">
+                            <a href="<?= $escaper->escapeUrl($productInfo['admin_url']) ?>"
+                               class="detail-link" target="_blank">
+                                <?= $escaper->escapeHtml($productInfo['name']) ?>
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="stat-box">
+                            <p class="detail-label">SKU</p>
+                            <p class="detail-value"><?= $escaper->escapeHtml($productInfo['sku']) ?></p>
+                        </div>
+
+                        <div class="stat-box">
+                            <p class="detail-label">Price</p>
+                            <p class="detail-value"><?= $escaper->escapeHtml($productInfo['price']) ?></p>
+                        </div>
+
+                        <div class="stat-box">
+                            <p class="detail-label">Product ID</p>
+                            <p class="detail-value">#<?= (int)$productInfo['id'] ?></p>
+                        </div>
+
+                        <div class="stat-box">
+                            <p class="detail-label">Type</p>
+                            <p class="detail-value"><?= $escaper->escapeHtml($productInfo['type']) ?></p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row" style="margin-top: 24px;">
+                        <a href="<?= $escaper->escapeUrl($productInfo['url']) ?>"
+                           class="detail-link" target="_blank">
+                            View on Storefront
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- View Details and Viewer Information -->
+    <div class="qvt-grid">
+        <div class="detail-card">
+            <h2 class="qvt-card-title">
+                View Details
+            </h2>
+
+            <div class="info-grid">
+                <div class="stat-box">
+                    <p class="detail-label">View ID</p>
+                    <p class="detail-value">#<?= (int)$viewRecord->getId() ?></p>
+                </div>
+
+                <div class="stat-box">
+                    <p class="detail-label">Viewed At</p>
+                    <p class="detail-value">
+                        <?= $escaper->escapeHtml($block->formatViewedAt($viewRecord->getViewedAt())) ?>
+                    </p>
+                </div>
+
+                <div class="stat-box">
+                    <p class="detail-label">Time Ago</p>
+                    <p class="detail-value">
+                        <?= $escaper->escapeHtml($block->getTimeAgo($viewRecord->getViewedAt())) ?>
+                    </p>
+                </div>
+
+                <div class="stat-box">
+                    <p class="detail-label">Viewer Type</p>
+                    <p class="detail-value">
+                        <span class="qvt-badge <?= $viewerType === 'customer' ? 'success' : 'info' ?>">
+                            <?= $escaper->escapeHtml(ucfirst($viewerType)) ?>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <h2 class="qvt-card-title">
+                Viewer Information
+            </h2>
+
+            <div class="detail-row">
+                <p class="detail-label">Viewer Name</p>
+                <p class="detail-value large"><?= $escaper->escapeHtml($viewerName) ?></p>
+            </div>
+
+            <?php if ($customerInfo): ?>
+                <div class="info-grid">
+                    <div class="stat-box">
+                        <p class="detail-label">Customer ID</p>
+                        <p class="detail-value">#<?= (int)$customerInfo['id'] ?></p>
+                    </div>
+
+                    <div class="stat-box">
+                        <p class="detail-label">Email</p>
+                        <p class="detail-value" style="font-size: 14px;">
+                            <?= $escaper->escapeHtml($customerInfo['email']) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <a href="<?= $escaper->escapeUrl($customerInfo['admin_url']) ?>"
+                       class="detail-link" target="_blank">
+                        View Customer Profile
+                    </a>
+                </div>
+            <?php elseif ($viewRecord->getVisitorId()): ?>
+                <div class="detail-row">
+                    <p class="detail-label">Visitor ID</p>
+                    <p class="detail-value"><?= $escaper->escapeHtml($viewRecord->getVisitorId()) ?></p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Product View History Timeline -->
+    <?php if (!empty($productHistory)): ?>
+    <div class="qvt-grid">
+        <div class="detail-card qvt-full">
+            <h2 class="qvt-card-title">
+                Product View History
+                <span class="qvt-badge" style="margin-left: auto;">
+                    <?= count($productHistory) ?> Views
+                </span>
+            </h2>
+
+            <div class="qvt-timeline">
+                <?php foreach ($productHistory as $historyItem): ?>
+                <div class="qvt-timeline-item">
+                    <div class="qvt-timeline-dot"></div>
+                    <div class="qvt-timeline-content">
+                        <p class="qvt-timeline-title">
+                            <?= $escaper->escapeHtml($historyItem['viewer_name']) ?>
+                            <?php if ($historyItem['id'] == $viewId): ?>
+                                <span class="qvt-badge success" style="margin-left: 8px;">
+                                    Current View
+                                </span>
+                            <?php endif; ?>
+                        </p>
+                        <p class="qvt-timeline-meta">
+                            <?= $escaper->escapeHtml($historyItem['time_ago']) ?> -
+                            <?= $escaper->escapeHtml($block->formatViewedAt($historyItem['viewed_at'])) ?>
+                            <?php if ($historyItem['id'] != $viewId): ?>
+                                | <a href="<?= $escaper->escapeUrl($historyItem['detail_url']) ?>" class="detail-link">
+                                    View Details
+                                </a>
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Customer View History (if applicable) -->
+    <?php if ($customerInfo):
+        $customerHistory = $block->getCustomerViewHistory($viewRecord->getCustomerId(), 10);
+        if (!empty($customerHistory)):
+    ?>
+    <div class="qvt-grid">
+        <div class="detail-card qvt-full">
+            <h2 class="qvt-card-title">
+                Customer's Recent Views
+                <span class="qvt-badge" style="margin-left: auto;">
+                    <?= count($customerHistory) ?> Views
+                </span>
+            </h2>
+
+            <div class="qvt-timeline">
+                <?php foreach ($customerHistory as $historyItem): ?>
+                <div class="qvt-timeline-item">
+                    <div class="qvt-timeline-dot"></div>
+                    <div class="qvt-timeline-content">
+                        <p class="qvt-timeline-title">
+                            <?= $escaper->escapeHtml($historyItem['product_name']) ?>
+                            <?php if ($historyItem['id'] == $viewId): ?>
+                                <span class="qvt-badge success" style="margin-left: 8px;">
+                                    Current View
+                                </span>
+                            <?php endif; ?>
+                        </p>
+                        <p class="qvt-timeline-meta">
+                            SKU: <?= $escaper->escapeHtml($historyItem['product_sku']) ?> -
+                            <?= $escaper->escapeHtml($historyItem['time_ago']) ?>
+                            <?php if ($historyItem['id'] != $viewId): ?>
+                                | <a href="<?= $escaper->escapeUrl($historyItem['detail_url']) ?>" class="detail-link">
+                                    View Details
+                                </a>
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    <?php endif; endif; ?>
+</div>

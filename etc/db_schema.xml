@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Database Schema
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <!-- Product Comparison Session Table -->
+    <table name="panth_product_comparison" resource="default" engine="innodb" comment="Product Comparison Data">
+        <column xsi:type="int" name="comparison_id" unsigned="true" nullable="false" identity="true" comment="Comparison ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" comment="Customer ID"/>
+        <column xsi:type="varchar" name="session_id" nullable="true" length="255" comment="Session ID"/>
+        <column xsi:type="text" name="product_ids" nullable="false" comment="Product IDs (JSON array)"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated At"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="comparison_id"/>
+        </constraint>
+
+        <index referenceId="PANTH_PRODUCT_COMPARISON_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+
+        <index referenceId="PANTH_PRODUCT_COMPARISON_SESSION_ID" indexType="btree">
+            <column name="session_id"/>
+        </index>
+    </table>
+
+    <!-- Recently Viewed Products Table -->
+    <table name="panth_recently_viewed" resource="default" engine="innodb" comment="Recently Viewed Products">
+        <column xsi:type="int" name="view_id" unsigned="true" nullable="false" identity="true" comment="View ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" comment="Customer ID"/>
+        <column xsi:type="varchar" name="visitor_id" nullable="true" length="255" comment="Visitor ID (for guests)"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <column xsi:type="int" name="store_id" unsigned="true" nullable="false" comment="Store ID"/>
+        <column xsi:type="timestamp" name="viewed_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Last Viewed At"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="view_id"/>
+        </constraint>
+
+        <constraint xsi:type="foreign" referenceId="PANTH_RECENTLY_VIEWED_PRODUCT_ID_CATALOG_PRODUCT_ENTITY_ENTITY_ID"
+                    table="panth_recently_viewed" column="product_id" referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id" onDelete="CASCADE"/>
+
+        <index referenceId="PANTH_RECENTLY_VIEWED_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+
+        <index referenceId="PANTH_RECENTLY_VIEWED_VISITOR_ID" indexType="btree">
+            <column name="visitor_id"/>
+        </index>
+
+        <index referenceId="PANTH_RECENTLY_VIEWED_VIEWED_AT" indexType="btree">
+            <column name="viewed_at"/>
+        </index>
+    </table>
+</schema>

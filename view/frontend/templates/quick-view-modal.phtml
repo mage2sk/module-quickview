@@ -1,0 +1,275 @@
+<?php
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Quick View Modal - clean, centered, responsive
+ * @var \Panth\QuickView\Block\QuickView $block
+ */
+if (!$block->isEnabled()) return;
+$quickViewUrl = $block->getQuickViewUrl();
+$cartAddUrl = $block->getUrl('checkout/cart/add');
+$sectionLoadUrl = $block->getUrl('customer/section/load');
+$qvHelper = $block->getHelper();
+?>
+
+<style>
+.qv-overlay { position:fixed;inset:0;z-index:80;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px); }
+.qv-wrapper { position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px; }
+.qv-modal { position:relative;background:#fff;border-radius:16px;box-shadow:0 25px 60px rgba(0,0,0,0.3);width:100%;max-width:880px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column; }
+.qv-close { position:absolute;top:12px;right:12px;z-index:10;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:none;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.15);cursor:pointer;color:#525252; }
+.qv-close:hover { background:#f5f5f5; }
+.qv-grid { display:grid;grid-template-columns:1fr 1fr; }
+.qv-img-area { padding:24px;background:#f5f5f5;display:flex;flex-direction:column;gap:10px; }
+.qv-img-main { aspect-ratio:1;border-radius:12px;overflow:hidden;background:#fff; }
+.qv-img-main img { width:100%;height:100%;object-fit:contain; }
+.qv-thumbs { display:flex;gap:6px;overflow-x:auto;padding-bottom:4px; }
+.qv-thumb { flex-shrink:0;width:52px;height:52px;border-radius:8px;overflow:hidden;cursor:pointer;background:#fff;padding:2px;border:2px solid #e5e5e5; }
+.qv-thumb.active { border-color:var(--color-primary, #0D9488); }
+.qv-thumb img { width:100%;height:100%;object-fit:contain;border-radius:6px; }
+.qv-info { padding:24px 24px 24px 20px;display:flex;flex-direction:column; }
+.qv-name { font-size:1.2rem;font-weight:700;color:#171717;margin:0 0 6px;line-height:1.3;padding-right:28px; }
+.qv-sku { font-size:12px;color:#737373;margin:0 0 14px;text-transform:uppercase;letter-spacing:0.5px; }
+.qv-price { margin-bottom:14px;font-size:1.5rem;font-weight:700;color:#171717; }
+.qv-stock { align-self:flex-start;display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:12px; }
+.qv-stock.in { color:#15803d;background:#f0fdf4; }
+.qv-stock.out { color:#dc2626;background:#fef2f2; }
+.qv-desc { font-size:0.875rem;line-height:1.6;color:#525252;margin:0 0 12px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical; }
+.qv-cart-row { display:flex;align-items:stretch;gap:0;border-radius:10px;overflow:hidden;border:1px solid #e5e5e5; }
+.qv-qty-wrap { display:flex;align-items:center;background:#f5f5f5;flex-shrink:0; }
+.qv-qty-btn { width:32px;height:42px;border:none;background:transparent;cursor:pointer;font-size:1rem;color:#171717;display:flex;align-items:center;justify-content:center;transition:background 0.15s; }
+.qv-qty-btn:hover { background:#e5e5e5; }
+.qv-qty-input { width:32px;height:42px;border:none;text-align:center;font-size:0.85rem;font-weight:600;outline:none;background:transparent;-moz-appearance:textfield; }
+.qv-qty-input::-webkit-outer-spin-button, .qv-qty-input::-webkit-inner-spin-button { -webkit-appearance:none;margin:0; }
+.qv-btn-cart { flex:1;padding:10px 16px;border:none;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;background:var(--color-primary-fill, #0F766E);transition:all 0.2s; }
+.qv-btn-cart:hover { filter:brightness(0.9); }
+.qv-btn-cart.success { background:#15803d; }
+.qv-btn-cart:disabled { opacity:0.7;cursor:not-allowed; }
+.qv-modal .qv-btn-cart.success:disabled, .qv-modal .qv-btn-cart.success:disabled span { opacity:1;color:#fff !important;background-color:#15803d !important; }
+.qv-modal button:focus-visible, .qv-modal a:focus-visible, .qv-modal input:focus-visible { outline:2px solid var(--color-primary, #0D9488);outline-offset:2px; }
+@media (pointer: coarse) { .qv-qty-btn { width:44px; } .qv-close { width:44px;height:44px; } [data-addto="quickview"] { min-width:44px;min-height:44px; } }
+.qv-cart-error { font-size:0.875rem;line-height:1.4;color:#b91c1c;background:#fef2f2;border-radius:8px;padding:8px 12px;margin:10px 0 0; }
+.qv-btn-cart svg { width:16px;height:16px;flex-shrink:0; }
+.qv-btn-options { display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:none;border-radius:10px;font-size:0.85rem;font-weight:600;text-decoration:none;color:#fff;background:var(--color-primary-fill, #0F766E); }
+.qv-link { display:block;text-align:center;margin-top:10px;font-size:0.875rem;color:var(--color-primary-fill, #0F766E);text-decoration:none;font-weight:600; }
+.qv-note { font-size:0.75rem;color:#525252;margin:0 0 10px; }
+.qv-loading { padding:80px;text-align:center; }
+.qv-loading svg { width:36px;height:36px;margin:0 auto 12px;color:var(--color-primary, #0D9488); }
+.qv-loading p { color:#525252;font-size:0.875rem; }
+@media (max-width: 767px) {
+    .qv-wrapper { padding:8px !important;align-items:center !important; }
+    .qv-modal { width:calc(100vw - 16px) !important;max-width:calc(100vw - 16px) !important;max-height:85vh !important;border-radius:14px !important; }
+    .qv-grid { grid-template-columns:1fr !important; }
+    .qv-img-area { padding:12px !important;max-height:200px; }
+    .qv-img-main { aspect-ratio:auto !important;height:170px; }
+    .qv-thumbs { display:none !important; }
+    .qv-info { padding:12px 16px 16px !important; }
+    .qv-name { font-size:1rem;padding-right:0; }
+    .qv-sku { font-size:12px;margin-bottom:8px; }
+    .qv-price { margin-bottom:6px; }
+    .qv-stock { margin-bottom:8px; }
+    .qv-desc { font-size:0.875rem;line-height:1.5;margin-bottom:10px;max-height:none;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical; }
+    .qv-close { top:8px;right:8px;width:44px;height:44px; }
+    .qv-qty-input { width:40px;font-size:16px; }
+    .qv-qty-btn { width:44px; }
+    .qv-btn-cart { font-size:0.875rem; }
+}
+</style>
+
+<script>
+function quickViewModal() {
+    return {
+        show: false, loading: false, error: null, product: null,
+        mainImage: '', qty: 1, addingToCart: false, cartSuccess: false, cartError: '', lastFocus: null,
+        openModal(productId) {
+            this.show = true; this.loading = true; this.error = null;
+            this.product = null; this.qty = 1; this.cartSuccess = false; this.cartError = '';
+            this.lastFocus = document.activeElement;
+            this.$nextTick(() => { if (this.$refs.qvClose) this.$refs.qvClose.focus({ preventScroll: true }); });
+            document.body.style.overflow = 'hidden';
+            document.documentElement.classList.add('panth-overlay-open');
+            fetch('<?= $escaper->escapeJs($quickViewUrl) ?>?id=' + encodeURIComponent(productId), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.product) { this.product = data.product; this.mainImage = data.product.images?.[0]?.url || ''; }
+                    else { this.error = data.message || '<?= $escaper->escapeJs(__('Product not found.')) ?>'; }
+                })
+                .catch(() => this.error = '<?= $escaper->escapeJs(__('Failed to load product.')) ?>')
+                .finally(() => this.loading = false);
+        },
+        closeModal() {
+            this.show = false; document.body.style.overflow = ''; document.documentElement.classList.remove('panth-overlay-open');
+            if (this.lastFocus && typeof this.lastFocus.focus === 'function') this.lastFocus.focus({ preventScroll: true });
+            this.lastFocus = null;
+        },
+        trapFocus(e) {
+            const items = [...this.$refs.qvDialog.querySelectorAll('button:not([disabled]), a[href], input')].filter(el => el.offsetParent !== null);
+            if (!items.length) return;
+            const first = items[0], last = items[items.length - 1];
+            if (e.shiftKey && (document.activeElement === first || document.activeElement === this.$refs.qvDialog)) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        },
+        async addToCart() {
+            this.addingToCart = true;
+            this.cartError = '';
+            try {
+                const fd = new FormData();
+                fd.append('product', this.product.id);
+                fd.append('qty', this.qty);
+                fd.append('form_key', this.product.form_key);
+                const r = await fetch('<?= $escaper->escapeJs($cartAddUrl) ?>', { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                let data = {};
+                try { data = await r.json(); } catch (e) { data = {}; }
+                const rejected = !r.ok || (data && typeof data.backUrl === 'string' && data.backUrl.indexOf('/checkout/cart') === -1);
+                if (!rejected) {
+                    this.cartSuccess = true;
+                    window.dispatchEvent(new CustomEvent('reload-customer-section-data'));
+                    setTimeout(() => this.closeModal(), 1200);
+                } else {
+                    this.cartError = await this.loadCartError();
+                }
+            } catch (e) {
+                this.cartError = '<?= $escaper->escapeJs(__('This product could not be added to the cart.')) ?>';
+            } finally {
+                this.addingToCart = false;
+            }
+        },
+        async loadCartError() {
+            const fallback = '<?= $escaper->escapeJs(__('This product could not be added to the cart.')) ?>';
+            try {
+                const r = await fetch('<?= $escaper->escapeJs($sectionLoadUrl) ?>?sections=messages&force_new_section_timestamp=true&_=' + Date.now(), { headers: { 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' });
+                const data = await r.json();
+                const list = (data && data.messages && data.messages.messages) || [];
+                const err = list.find(m => m.type === 'error') || list[0];
+                if (!err || !err.text) return fallback;
+                const text = new DOMParser().parseFromString(String(err.text), 'text/html').body.textContent;
+                return text || fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+    };
+}
+</script>
+
+<div x-data="quickViewModal()"
+     @open-quick-view.window="openModal($event.detail.productId)"
+     @keydown.escape.window="show && closeModal()">
+
+    <div x-show="show" x-transition.opacity style="display:none;">
+            <!-- Overlay -->
+            <div class="qv-overlay" @click="closeModal()"></div>
+
+            <!-- Modal Wrapper -->
+            <div class="qv-wrapper" @click.self="closeModal()">
+                <div class="qv-modal" @click.stop role="dialog" aria-modal="true" tabindex="-1" x-ref="qvDialog"
+                     :aria-label="product?.name || '<?= $escaper->escapeJs(__('Quick View')) ?>'"
+                     @keydown.tab="trapFocus($event)">
+
+                    <!-- Close -->
+                    <button type="button" class="qv-close" x-ref="qvClose" @click="closeModal()" aria-label="<?= $escaper->escapeHtmlAttr(__('Close')) ?>">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+
+                    <!-- Loading -->
+                    <div x-show="loading" class="qv-loading">
+                        <svg class="animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p><?= $escaper->escapeHtml(__('Loading product...')) ?></p>
+                    </div>
+
+                    <!-- Error -->
+                    <div x-show="error && !loading" style="padding:60px;text-align:center;" role="alert">
+                        <p style="color:#525252;" x-text="error"></p>
+                    </div>
+
+                    <!-- Product -->
+                    <div x-show="product && !loading" style="overflow-y:auto;flex:1;">
+                        <div class="qv-grid">
+                            <!-- Image -->
+                            <div class="qv-img-area">
+                                <div class="qv-img-main">
+                                    <template x-if="mainImage">
+                                        <img :src="mainImage" :alt="product?.name || '<?= $escaper->escapeJs(__('Product image')) ?>'" />
+                                    </template>
+                                </div>
+                                <?php if ($qvHelper->showImageGallery()): ?>
+                                <div x-show="product?.images?.length > 1" class="qv-thumbs">
+                                    <template x-for="(img, i) in (product?.images || [])" :key="i">
+                                        <button type="button" class="qv-thumb" :class="mainImage === img.url && 'active'" @click="mainImage = img.url" :aria-label="'<?= $escaper->escapeJs(__('View image')) ?> ' + (i + 1)" :aria-pressed="mainImage === img.url ? 'true' : 'false'">
+                                            <img :src="img.thumb_url || img.url" :alt="img.label || product?.name || '<?= $escaper->escapeJs(__('Product image')) ?>'" />
+                                        </button>
+                                    </template>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Info -->
+                            <div class="qv-info">
+                                <p class="qv-name" x-text="product?.name"></p>
+                                <?php if ($qvHelper->showSku()): ?>
+                                <p class="qv-sku"><?= $escaper->escapeHtml(__('SKU:')) ?> <span x-text="product?.sku"></span></p>
+                                <?php endif; ?>
+                                <div class="qv-price" x-html="product?.price_html"></div>
+
+                                <?php if ($qvHelper->showStockStatus()): ?>
+                                <span x-show="product?.in_stock" class="qv-stock in">
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                    <?= $escaper->escapeHtml(__('In Stock')) ?>
+                                </span>
+                                <span x-show="!product?.in_stock" class="qv-stock out"><?= $escaper->escapeHtml(__('Out of Stock')) ?></span>
+                                <?php endif; ?>
+
+                                <?php if ($qvHelper->showShortDescription()): ?>
+                                <p x-show="product?.short_description && product.short_description.length > 0" x-text="product?.short_description" class="qv-desc"></p>
+                                <?php endif; ?>
+
+                                <div style="flex:1;min-height:8px;"></div>
+
+                                <!-- Simple: Combined Qty + Add to Cart -->
+                                <?php if ($qvHelper->showAddToCart()): ?>
+                                <div x-show="product?.in_stock && (product?.type_id === 'simple' || product?.type_id === 'virtual')" class="qv-cart-row">
+                                    <div class="qv-qty-wrap">
+                                        <button class="qv-qty-btn" type="button" @click="qty > 1 && qty--" aria-label="<?= $escaper->escapeHtmlAttr(__('Decrease quantity')) ?>">−</button>
+                                        <input class="qv-qty-input" type="number" x-model.number="qty" min="1" max="99" aria-label="<?= $escaper->escapeHtmlAttr(__('Quantity')) ?>" />
+                                        <button class="qv-qty-btn" type="button" @click="qty++" aria-label="<?= $escaper->escapeHtmlAttr(__('Increase quantity')) ?>">+</button>
+                                    </div>
+                                    <button class="qv-btn-cart" :class="cartSuccess && 'success'" :disabled="addingToCart" type="button" @click="addToCart()">
+                                        <template x-if="!addingToCart && !cartSuccess">
+                                            <span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
+                                                <svg width="16" height="16" style="flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                                                <?= $escaper->escapeHtml(__('Add to Cart')) ?>
+                                            </span>
+                                        </template>
+                                        <template x-if="addingToCart">
+                                            <svg class="animate-spin" width="16" height="16" fill="none" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                                        </template>
+                                        <template x-if="cartSuccess">
+                                            <span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
+                                                <svg width="16" height="16" style="flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                <?= $escaper->escapeHtml(__('Added!')) ?>
+                                            </span>
+                                        </template>
+                                    </button>
+                                </div>
+                                <p x-show="cartError" x-text="cartError" class="qv-cart-error" role="alert"></p>
+                                <?php endif; ?>
+
+                                <!-- Configurable/Bundle: Select Options -->
+                                <div x-show="product?.in_stock && product?.type_id !== 'simple' && product?.type_id !== 'virtual'">
+                                    <p class="qv-note"><?= $escaper->escapeHtml(__('This product has options. Please visit the product page to select.')) ?></p>
+                                    <a :href="product?.url" class="qv-btn-options">
+                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                                        <?= $escaper->escapeHtml(__('Select Options')) ?>
+                                    </a>
+                                </div>
+
+                                <a :href="product?.url" class="qv-link"><?= $escaper->escapeHtml(__('View Full Details')) ?></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

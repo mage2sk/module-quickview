@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * View Tracker Detail Layout
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Panth_QuickView::css/admin-styles.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Panth\QuickView\Block\Adminhtml\ViewTracker" name="quickview_viewtracker_detail" template="Panth_QuickView::viewtracker/view.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

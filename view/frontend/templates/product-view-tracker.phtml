@@ -1,0 +1,48 @@
+<?php
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Product View Tracker - POSTs to AJAX endpoint on product page load
+ *
+ * @var $block \Panth\QuickView\Block\ProductViewTracker
+ */
+$product = $block->getCurrentProduct();
+if (!$product || !$product->getId()) {
+    return;
+}
+$productId = (int)$product->getId();
+$trackUrl = $block->getUrl('quickview/track/view');
+?>
+
+<script>
+(function() {
+    function getFormKey() {
+        if (window.hyva && typeof window.hyva.getFormKey === 'function') {
+            return window.hyva.getFormKey();
+        }
+        var match = document.cookie.match(/(?:^|;\s*)form_key=([^;]+)/);
+        if (match) {
+            return decodeURIComponent(match[1]);
+        }
+        var input = document.querySelector('input[name="form_key"]');
+        return input ? input.value : '';
+    }
+
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            var formKey = getFormKey();
+            if (!formKey) {
+                return;
+            }
+            fetch('<?= $block->escapeJs($trackUrl) ?>', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'product_id=' + <?= (int)$productId ?> + '&form_key=' + encodeURIComponent(formKey)
+            }).catch(function() {});
+        }, 500);
+    });
+})();
+</script>

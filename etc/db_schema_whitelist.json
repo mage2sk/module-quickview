@@ -1,0 +1,38 @@
+{
+    "panth_product_comparison": {
+        "column": {
+            "comparison_id": true,
+            "customer_id": true,
+            "session_id": true,
+            "product_ids": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "PANTH_PRODUCT_COMPARISON_CUSTOMER_ID": true,
+            "PANTH_PRODUCT_COMPARISON_SESSION_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "panth_recently_viewed": {
+        "column": {
+            "view_id": true,
+            "customer_id": true,
+            "visitor_id": true,
+            "product_id": true,
+            "store_id": true,
+            "viewed_at": true
+        },
+        "index": {
+            "PANTH_RECENTLY_VIEWED_CUSTOMER_ID": true,
+            "PANTH_RECENTLY_VIEWED_VISITOR_ID": true,
+            "PANTH_RECENTLY_VIEWED_VIEWED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PANTH_RECENTLY_VIEWED_PRD_ID_CAT_PRD_ENTT_ENTT_ID": true
+        }
+    }
+}

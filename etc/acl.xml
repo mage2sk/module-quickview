@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Access Control List (ACL)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Panth_QuickView::quickview" title="Quick View &amp; Compare" translate="title" sortOrder="100">
+                    <resource id="Panth_QuickView::view_tracker" title="View Tracker" translate="title" sortOrder="10"/>
+                    <resource id="Panth_QuickView::comparison" title="Product Comparison" translate="title" sortOrder="20"/>
+                    <resource id="Panth_QuickView::config" title="Configuration" translate="title" sortOrder="30"/>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

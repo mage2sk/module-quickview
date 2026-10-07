@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Default Configuration Values
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <panth_quickview>
+            <general>
+                <enabled>1</enabled>
+            </general>
+            <display>
+                <show_image_gallery>1</show_image_gallery>
+                <show_short_description>1</show_short_description>
+                <show_sku>1</show_sku>
+                <show_stock_status>1</show_stock_status>
+                <show_add_to_cart>1</show_add_to_cart>
+            </display>
+        </panth_quickview>
+    </default>
+</config>

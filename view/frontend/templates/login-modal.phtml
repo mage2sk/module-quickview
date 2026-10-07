@@ -1,0 +1,208 @@
+<?php
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Login/Register Modal for Wishlist/Compare Actions
+ */
+
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+?>
+
+<div x-data="{
+        isOpen: false,
+        activeTab: 'login',
+        pendingAction: null,
+        message: '',
+
+        init() {
+            window.addEventListener('open-login-modal', (e) => {
+                this.message = e.detail.message || 'Please log in to continue';
+                this.pendingAction = e.detail;
+                this.isOpen = true;
+                this.activeTab = 'login';
+            });
+        }
+    }"
+     x-cloak
+     @keydown.escape.window="isOpen = false">
+
+    <!-- Backdrop -->
+    <template x-if="isOpen">
+        <div x-transition:enter="transition-opacity ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="isOpen = false"
+             class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50">
+        </div>
+    </template>
+
+    <!-- Modal -->
+    <template x-if="isOpen">
+        <div x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4"
+             @click.self="isOpen = false">
+
+            <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border-2 border-gray-100"
+                 @click.stop>
+
+                <!-- Close Button -->
+                <button @click="isOpen = false"
+                        type="button"
+                        class="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:rotate-90 hover:scale-110 z-10">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+                <!-- Header -->
+                <div class="px-6 pt-6 pb-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2.5 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-md">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-black text-gray-900">Account Required</h2>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 font-medium" x-text="message"></p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="px-6 mb-4">
+                    <div class="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                        <button @click="activeTab = 'login'"
+                                type="button"
+                                class="flex-1 px-4 py-2.5 font-bold rounded-lg transition-all duration-200"
+                                :class="activeTab === 'login' ? 'bg-white text-purple-600 shadow-md' : 'text-gray-600 hover:text-gray-900'">
+                            Log In
+                        </button>
+                        <button @click="activeTab = 'register'"
+                                type="button"
+                                class="flex-1 px-4 py-2.5 font-bold rounded-lg transition-all duration-200"
+                                :class="activeTab === 'register' ? 'bg-white text-purple-600 shadow-md' : 'text-gray-600 hover:text-gray-900'">
+                            Create Account
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <div x-show="activeTab === 'login'"
+                     class="px-6 pb-6">
+                    <form action="<?= $escaper->escapeUrl($block->getUrl('customer/account/loginPost')) ?>"
+                          method="post"
+                          class="space-y-4">
+                        <?= $block->getBlockHtml('formkey') ?>
+
+                        <input type="hidden" name="return_url" :value="window.location.href">
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                            <input type="email"
+                                   name="login[username]"
+                                   required
+                                   placeholder="your@email.com"
+                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Password</label>
+                            <input type="password"
+                                   name="login[password]"
+                                   required
+                                   placeholder="••••••••"
+                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                        </div>
+
+                        <button type="submit"
+                                class="w-full px-6 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                            Log In
+                        </button>
+
+                        <div class="text-center">
+                            <a href="<?= $escaper->escapeUrl($block->getUrl('customer/account/forgotpassword')) ?>"
+                               class="text-sm font-semibold text-purple-600 hover:text-purple-700">
+                                Forgot your password?
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div x-show="activeTab === 'register'"
+                     class="px-6 pb-6">
+                    <form action="<?= $escaper->escapeUrl($block->getUrl('customer/account/createpost')) ?>"
+                          method="post"
+                          class="space-y-4">
+                        <?= $block->getBlockHtml('formkey') ?>
+
+                        <input type="hidden" name="success_url" :value="window.location.href">
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">First Name</label>
+                                <input type="text"
+                                       name="firstname"
+                                       required
+                                       placeholder="John"
+                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Last Name</label>
+                                <input type="text"
+                                       name="lastname"
+                                       required
+                                       placeholder="Doe"
+                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                            <input type="email"
+                                   name="email"
+                                   required
+                                   placeholder="your@email.com"
+                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Password</label>
+                            <input type="password"
+                                   name="password"
+                                   required
+                                   minlength="8"
+                                   placeholder="Minimum 8 characters"
+                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Confirm Password</label>
+                            <input type="password"
+                                   name="password_confirmation"
+                                   required
+                                   minlength="8"
+                                   placeholder="Re-enter password"
+                                   class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                        </div>
+
+                        <button type="submit"
+                                class="w-full px-6 py-3.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                            Create Account
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>

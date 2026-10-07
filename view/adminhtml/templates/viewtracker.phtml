@@ -1,0 +1,645 @@
+<?php
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * View Tracker Dashboard Template
+ *
+ * @var $block \Panth\QuickView\Block\Adminhtml\ViewTracker
+ */
+
+$stats = $block->getViewStats();
+$mostViewed = $block->getMostViewedProducts(10);
+$recentViews = $block->getRecentViews(20);
+$trendData = $block->getViewTrendData();
+$hourlyData = $block->getHourlyDistribution();
+$topCustomers = $block->getTopCustomers(10);
+?>
+
+<style>
+    /* Tailwind-inspired CSS with beautiful design */
+    .view-tracker-container {
+        font-family: inherit;
+        background: #f8f8f8;
+        padding: 32px;
+        min-height: 100vh;
+    }
+
+    .tracker-header {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 24px;
+    }
+
+    .tracker-header h1 {
+        font-size: 40px;
+        font-weight: 700;
+        color: #303030;
+        margin: 0 0 8px 0;
+    }
+
+    .tracker-header p {
+        color: #514943;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .stats-grid > .stat-card {
+        min-width: 0;
+    }
+
+    @media (min-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .stats-grid {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .stats-grid > .stat-card {
+            padding: 20px;
+        }
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-left: 4px solid;
+    }
+
+    .stat-card:hover {
+        transform: none;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+    .stat-card { border-color: #eb5202; }
+
+    .stat-value {
+        font-size: 40px;
+        font-weight: 700;
+        margin: 8px 0;
+    }
+
+    .stat-card .stat-value { color: #303030; }
+
+    .stat-label {
+        color: #6b7280;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .stat-icon {
+        font-size: 32px;
+        opacity: 0.3;
+        float: right;
+    }
+
+    .qvt-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .qvt-grid--even {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .qvt-grid > * {
+        min-width: 0;
+    }
+
+    @media (max-width: 1200px) {
+        .qvt-grid,
+        .qvt-grid--even {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .chart-card, .list-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .qvt-card-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .qvt-badge {
+        background: #f1f1f1;
+        color: #41362f;
+        border: 1px solid #d6d6d6;
+        padding: 6px 12px;
+        border-radius: 9999px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .product-list, .customer-list, .recent-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product-item, .customer-item, .recent-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background 0.2s;
+    }
+
+    .product-item:hover, .customer-item:hover, .recent-item:hover {
+        background: #f9fafb;
+    }
+
+    .product-item:last-child, .customer-item:last-child, .recent-item:last-child {
+        border-bottom: none;
+    }
+
+    .product-item, .customer-item {
+        gap: 12px;
+    }
+
+    .recent-item {
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+
+    .item-info {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .recent-item .item-info {
+        flex-basis: 220px;
+    }
+
+    .customer-item .item-meta {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .item-name a {
+        overflow-wrap: anywhere;
+    }
+
+    .recent-item .item-meta {
+        overflow-wrap: anywhere;
+    }
+
+    .recent-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .recent-actions .detail-link {
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .item-name {
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0 0 4px 0;
+        font-size: 16px;
+    }
+
+    .item-name a {
+        color: #006bb4;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .item-name a:hover {
+        color: #004d82;
+        text-decoration: underline;
+    }
+
+    .item-meta {
+        color: #6b7280;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .item-count {
+        background: #eb5202;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 20px;
+        min-width: 60px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .rank-badge {
+        background: #6b7280;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-right: 4px;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .rank-badge.gold { background: #b45309; }
+    .rank-badge.silver { background: #64748b; }
+    .rank-badge.bronze { background: #92400e; }
+
+    .time-badge {
+        background: #f1f1f1;
+        color: #41362f;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .qvt-empty {
+        text-align: center;
+        padding: 48px 16px;
+        color: #6b7280;
+    }
+
+    .qvt-empty svg {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        opacity: 0.3;
+    }
+
+    canvas {
+        max-height: 300px;
+    }
+
+    .qvt-full {
+        grid-column: 1 / -1;
+    }
+
+    .detail-link {
+        color: #006bb4;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .detail-link:hover {
+        color: #004d82;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="view-tracker-container">
+    <!-- Header -->
+    <div class="tracker-header">
+        <p>Comprehensive analytics and insights for product views across your store</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card purple">
+            <p class="stat-label">Total Views</p>
+            <div class="stat-value"><?= $escaper->escapeHtml(number_format($stats['total'])) ?></div>
+        </div>
+
+        <div class="stat-card blue">
+            <p class="stat-label">Today's Views</p>
+            <div class="stat-value"><?= $escaper->escapeHtml(number_format($stats['today'])) ?></div>
+        </div>
+
+        <div class="stat-card green">
+            <p class="stat-label">This Week</p>
+            <div class="stat-value"><?= $escaper->escapeHtml(number_format($stats['week'])) ?></div>
+        </div>
+
+        <div class="stat-card orange">
+            <p class="stat-label">This Month</p>
+            <div class="stat-value"><?= $escaper->escapeHtml(number_format($stats['month'])) ?></div>
+        </div>
+
+        <div class="stat-card pink">
+            <p class="stat-label">Unique Visitors</p>
+            <div class="stat-value"><?= $escaper->escapeHtml(number_format($stats['unique_visitors'])) ?></div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="qvt-grid">
+        <div class="chart-card qvt-full">
+            <div class="card-header">
+                <h2 class="qvt-card-title">30-Day View Trends</h2>
+                <span class="qvt-badge">Last 30 Days</span>
+            </div>
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <div class="qvt-grid">
+        <div class="chart-card">
+            <div class="card-header">
+                <h2 class="qvt-card-title">Today's Hourly Distribution</h2>
+                <span class="qvt-badge">Real-time</span>
+            </div>
+            <canvas id="hourlyChart"></canvas>
+        </div>
+
+        <div class="list-card">
+            <div class="card-header">
+                <h2 class="qvt-card-title">Top Customers</h2>
+                <span class="qvt-badge"><?= (int)count($topCustomers) ?></span>
+            </div>
+            <?php if (!empty($topCustomers)): ?>
+                <ul class="customer-list">
+                    <?php $rank = 1; foreach ($topCustomers as $customer): ?>
+                        <li class="customer-item">
+                            <span class="rank-badge <?= $escaper->escapeHtmlAttr($rank === 1 ? 'gold' : ($rank === 2 ? 'silver' : ($rank === 3 ? 'bronze' : ''))) ?>">
+                                <?= (int)$rank ?>
+                            </span>
+                            <div class="item-info">
+                                <p class="item-name">
+                                    <a href="<?= $escaper->escapeUrl($customer['url']) ?>" target="_blank">
+                                        <?= $escaper->escapeHtml($customer['name']) ?>
+                                    </a>
+                                </p>
+                                <p class="item-meta" title="<?= $escaper->escapeHtmlAttr($customer['email']) ?>"><?= $escaper->escapeHtml($customer['email']) ?></p>
+                            </div>
+                            <div class="item-count"><?= $escaper->escapeHtml(number_format($customer['count'])) ?></div>
+                        </li>
+                    <?php $rank++; endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <div class="qvt-empty">
+                    <p>No customer data available</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Most Viewed Products -->
+    <div class="qvt-grid qvt-grid--even">
+        <div class="list-card">
+            <div class="card-header">
+                <h2 class="qvt-card-title">Most Viewed Products</h2>
+                <span class="qvt-badge"><?= (int)count($mostViewed) ?></span>
+            </div>
+            <?php if (!empty($mostViewed)): ?>
+                <ul class="product-list">
+                    <?php $rank = 1; foreach ($mostViewed as $product): ?>
+                        <li class="product-item">
+                            <span class="rank-badge <?= $escaper->escapeHtmlAttr($rank === 1 ? 'gold' : ($rank === 2 ? 'silver' : ($rank === 3 ? 'bronze' : ''))) ?>">
+                                <?= (int)$rank ?>
+                            </span>
+                            <div class="item-info">
+                                <p class="item-name">
+                                    <a href="<?= $escaper->escapeUrl($product['url']) ?>" target="_blank">
+                                        <?= $escaper->escapeHtml($product['name']) ?>
+                                    </a>
+                                </p>
+                                <p class="item-meta">SKU: <?= $escaper->escapeHtml($product['sku']) ?></p>
+                            </div>
+                            <div class="item-count"><?= $escaper->escapeHtml(number_format($product['count'])) ?></div>
+                        </li>
+                    <?php $rank++; endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <div class="qvt-empty">
+                    <p>No product views tracked yet</p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Recent Views -->
+        <div class="list-card">
+            <div class="card-header">
+                <h2 class="qvt-card-title">Recent Views</h2>
+                <span class="qvt-badge">Live</span>
+            </div>
+            <?php if (!empty($recentViews)): ?>
+                <ul class="recent-list">
+                    <?php foreach (array_slice($recentViews, 0, 10) as $view): ?>
+                        <li class="recent-item">
+                            <div class="item-info">
+                                <p class="item-name">
+                                    <a href="<?= $escaper->escapeUrl($view['product_url']) ?>" target="_blank">
+                                        <?= $escaper->escapeHtml($view['product_name']) ?>
+                                    </a>
+                                </p>
+                                <p class="item-meta">
+                                    <?= $escaper->escapeHtml($view['viewer_name']) ?> -
+                                    SKU: <?= $escaper->escapeHtml($view['product_sku']) ?>
+                                </p>
+                            </div>
+                            <div class="recent-actions">
+                                <a href="<?= $escaper->escapeUrl($block->getUrl('quickview/viewtracker/view', ['id' => $view['view_id']])) ?>"
+                                   class="detail-link">
+                                    View Details
+                                </a>
+                                <span class="time-badge"><?= $escaper->escapeHtml($view['time_ago']) ?></span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <div class="qvt-empty">
+                    <p>No recent views</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<script>
+require(['jquery', 'chartJs', 'domReady!'], function($, Chart) {
+    // Trend Chart
+    const trendCtx = document.getElementById('trendChart');
+    if (trendCtx) {
+        const trendChart = new Chart(trendCtx.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: <?= /* @noEscape */ json_encode($trendData['labels']) ?>,
+                datasets: [
+                    {
+                        label: 'Total Views',
+                        data: <?= /* @noEscape */ json_encode($trendData['view_data']) ?>,
+                        borderColor: '#eb5202',
+                        backgroundColor: 'rgba(235, 82, 2, 0.08)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Unique Products',
+                        data: <?= /* @noEscape */ json_encode($trendData['unique_data']) ?>,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14
+                        },
+                        bodyFont: {
+                            size: 13
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f3f4f6'
+                        },
+                        ticks: {
+                            precision: 0,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Hourly Chart
+    const hourlyCtx = document.getElementById('hourlyChart');
+    if (hourlyCtx) {
+        const hourlyChart = new Chart(hourlyCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: <?= /* @noEscape */ json_encode($hourlyData['labels']) ?>,
+                datasets: [{
+                    label: 'Views',
+                    data: <?= /* @noEscape */ json_encode($hourlyData['data']) ?>,
+                    backgroundColor: 'rgba(235, 82, 2, 0.75)',
+                    borderColor: '#eb5202',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14
+                        },
+                        bodyFont: {
+                            size: 13
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f3f4f6'
+                        },
+                        ticks: {
+                            precision: 0,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            },
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>

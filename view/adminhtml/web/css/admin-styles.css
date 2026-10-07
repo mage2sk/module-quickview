@@ -1,0 +1,898 @@
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Admin Styles - Modern Dashboard UI
+ */
+
+/* ========================================
+   Dashboard Container
+   ======================================== */
+.qv-dashboard-container {
+    padding: 30px;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.qv-dashboard-header {
+    margin-bottom: 35px;
+}
+
+.qv-dashboard-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.qv-dashboard-title i {
+    color: #667eea;
+    font-size: 28px;
+}
+
+.qv-dashboard-subtitle {
+    font-size: 16px;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* ========================================
+   Statistics Cards Grid
+   ======================================== */
+.qv-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.qv-stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 28px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.qv-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+}
+
+.qv-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+}
+
+/* Card Gradient Variations */
+.qv-card-gradient-purple {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+}
+
+.qv-card-gradient-blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+}
+
+.qv-card-gradient-green {
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+}
+
+.qv-card-gradient-orange {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+}
+
+.qv-stat-icon {
+    font-size: 48px;
+    opacity: 0.9;
+    min-width: 60px;
+}
+
+.qv-stat-content {
+    flex: 1;
+}
+
+.qv-stat-number {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.qv-stat-label {
+    font-size: 15px;
+    opacity: 0.95;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.qv-stat-breakdown {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.qv-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.qv-stat-item i {
+    font-size: 8px;
+}
+
+.qv-stat-percentage {
+    text-align: center;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+    padding-left: 20px;
+    min-width: 80px;
+}
+
+.qv-percentage-value {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.qv-percentage-label {
+    font-size: 11px;
+    opacity: 0.85;
+    text-transform: uppercase;
+}
+
+/* Status Indicators */
+.qv-status-active,
+.qv-status-pending {
+    color: #10b981;
+}
+
+.qv-status-notified,
+.qv-status-sent {
+    color: #93c5fd;
+}
+
+/* ========================================
+   Content Grid Layout
+   ======================================== */
+.qv-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 24px;
+}
+
+.qv-chart-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ========================================
+   Section Cards
+   ======================================== */
+.qv-section-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.qv-section-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.qv-section-header {
+    padding: 24px 28px;
+    border-bottom: 2px solid #f1f5f9;
+    background: linear-gradient(to right, #fafbfc 0%, #ffffff 100%);
+}
+
+.qv-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qv-section-title i {
+    color: #667eea;
+    font-size: 20px;
+}
+
+.qv-section-content {
+    padding: 28px;
+}
+
+/* ========================================
+   Chart Styles
+   ======================================== */
+.qv-chart-section canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* ========================================
+   Most Wanted Products
+   ======================================== */
+.qv-most-wanted-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.qv-most-wanted-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.qv-most-wanted-item:hover {
+    background: #f1f5f9;
+    transform: translateX(5px);
+}
+
+.qv-rank {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.qv-rank-1 {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    font-size: 18px;
+}
+
+.qv-rank-2 {
+    background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+}
+
+.qv-rank-3 {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+
+.qv-product-info {
+    flex: 1;
+}
+
+.qv-product-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+}
+
+.qv-product-sku {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.qv-alert-count {
+    text-align: center;
+}
+
+.qv-count-badge {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 2px;
+}
+
+.qv-count-label {
+    font-size: 11px;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+/* ========================================
+   Quick Actions
+   ======================================== */
+.qv-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.qv-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.qv-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: left 0.3s ease;
+}
+
+.qv-action-btn:hover::before {
+    left: 0;
+}
+
+.qv-action-btn i {
+    font-size: 18px;
+}
+
+.qv-action-btn span {
+    flex: 1;
+}
+
+.qv-btn-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.qv-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.qv-btn-primary:hover {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+}
+
+.qv-btn-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+}
+
+.qv-btn-info:hover {
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+}
+
+.qv-btn-secondary {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    color: white;
+}
+
+.qv-btn-secondary:hover {
+    box-shadow: 0 8px 20px rgba(100, 116, 139, 0.3);
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   Activity Feed
+   ======================================== */
+.qv-activity-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.qv-activity-feed::-webkit-scrollbar {
+    width: 6px;
+}
+
+.qv-activity-feed::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.qv-activity-feed::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.qv-activity-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 3px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.qv-activity-item:hover {
+    background: #f1f5f9;
+    transform: translateX(3px);
+}
+
+.qv-activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 16px;
+}
+
+.qv-activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.qv-activity-title {
+    font-size: 13px;
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.qv-activity-details {
+    font-size: 14px;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.qv-activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.qv-activity-time {
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.qv-activity-status {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.qv-activity-status.qv-status-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.qv-activity-status.qv-status-notified {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* ========================================
+   Empty State
+   ======================================== */
+.qv-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.qv-empty-state i {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.3;
+}
+
+.qv-empty-state p {
+    font-size: 15px;
+    margin: 0;
+}
+
+/* ========================================
+   Enhanced Grid Tables
+   ======================================== */
+.qv-admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.qv-admin-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.qv-admin-table th {
+    padding: 18px 20px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.qv-admin-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.qv-admin-table tbody tr:hover {
+    background: #f8f9fa;
+    transform: scale(1.01);
+}
+
+.qv-admin-table td {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: #1a1a2e;
+}
+
+/* ========================================
+   Status Badges
+   ======================================== */
+.qv-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.qv-badge i {
+    font-size: 10px;
+}
+
+.qv-badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.qv-badge-info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.qv-badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.qv-badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.qv-badge-secondary {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+/* ========================================
+   Product Thumbnail
+   ======================================== */
+.qv-product-thumb {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #f1f5f9;
+}
+
+/* ========================================
+   Action Buttons in Table
+   ======================================== */
+.qv-table-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.qv-action-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+}
+
+.qv-action-icon:hover {
+    transform: translateY(-2px);
+}
+
+.qv-action-view {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.qv-action-view:hover {
+    background: #3b82f6;
+    color: white;
+}
+
+.qv-action-send {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.qv-action-send:hover {
+    background: #10b981;
+    color: white;
+}
+
+.qv-action-delete {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.qv-action-delete:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* ========================================
+   Price Display
+   ======================================== */
+.qv-price-comparison {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.qv-price-old {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-size: 13px;
+}
+
+.qv-price-arrow {
+    color: #10b981;
+    font-size: 16px;
+}
+
+.qv-price-new {
+    color: #10b981;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.qv-price-change {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* ========================================
+   Customer Info
+   ======================================== */
+.qv-customer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.qv-customer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.qv-customer-details {
+    flex: 1;
+}
+
+.qv-customer-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1a1a2e;
+}
+
+.qv-customer-email {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+@media (max-width: 1400px) {
+    .qv-content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .qv-sidebar-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .qv-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .qv-sidebar-section {
+        grid-template-columns: 1fr;
+    }
+
+    .qv-dashboard-container {
+        padding: 20px;
+    }
+
+    .qv-stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .qv-stat-percentage {
+        border-left: none;
+        border-top: 2px solid rgba(255, 255, 255, 0.2);
+        padding-left: 0;
+        padding-top: 15px;
+        margin-top: 15px;
+        width: 100%;
+    }
+}
+
+/* ========================================
+   Grid Container
+   ======================================== */
+.qv-grid-container {
+    padding: 30px;
+    background: #f8f9fa;
+}
+
+.qv-grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.qv-grid-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.qv-grid-title i {
+    color: #667eea;
+}
+
+.qv-grid-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.qv-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.qv-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.qv-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* ========================================
+   Filter Panel
+   ======================================== */
+.qv-filter-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.qv-filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.qv-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.qv-filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.qv-filter-input,
+.qv-filter-select {
+    padding: 10px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.qv-filter-input:focus,
+.qv-filter-select:focus {
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}

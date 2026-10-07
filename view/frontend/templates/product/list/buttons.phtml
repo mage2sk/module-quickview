@@ -1,0 +1,39 @@
+<?php
+/**
+ * Product Action Buttons - Quick View Button for Product Listings
+ * Follows Hyvä Theme patterns and uses LucideIcons
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ * @var $viewModels \Hyva\Theme\Model\ViewModelRegistry
+ */
+
+use Hyva\Theme\Model\ViewModelRegistry;
+use Hyva\Theme\ViewModel\LucideIcons;
+
+/** @var ViewModelRegistry $viewModels */
+/** @var LucideIcons $lucideIcons */
+$lucideIcons = $viewModels->require(LucideIcons::class);
+
+// Get product - Hyvä passes it via getData('product'), NOT getProduct()
+/** @var \Magento\Catalog\Model\Product $product */
+if ($block instanceof \Panth\QuickView\Block\QuickView && !$block->isEnabled()) {
+    return;
+}
+if (! ($product = $block->getData('product'))) {
+    return;
+}
+
+$productId = $product->getId();
+$productName = $product->getName();
+?>
+
+<!-- Quick View Button - uses native onclick to bypass Alpine scope issues -->
+<button type="button"
+        onclick="event.preventDefault(); event.stopPropagation(); window.dispatchEvent(new CustomEvent('open-quick-view', {detail:{productId:<?= (int)$productId ?>}})); return false;"
+        aria-label="<?= $escaper->escapeHtmlAttr(__('Quick View') . ' ' . $productName) ?>"
+        title="<?= $escaper->escapeHtmlAttr(__('Quick View')) ?>"
+        class="btn p-2 rounded-full"
+        data-addto="quickview">
+    <?= $lucideIcons->eyeHtml('', 20, 20, ['aria-hidden' => 'true']) ?>
+</button>

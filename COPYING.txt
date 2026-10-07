@@ -1,0 +1,13 @@
+Panth Commercial License
+
+Copyright (c) 2026 Kishan Savaliya. All rights reserved.
+
+Use of this software is governed by the LICENSE.txt file distributed
+with the source code. Panth_QuickView is a commercial extension
+distributed via the Adobe Commerce Marketplace. A valid Marketplace
+purchase is required to use this software.
+
+For all licensing, support, and general questions, please contact:
+    Email:    kishansavaliyakb@gmail.com
+    Website:  https://kishansavaliya.com
+    WhatsApp: +91 84012 70422
