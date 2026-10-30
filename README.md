@@ -202,7 +202,7 @@ The module has no uninstall script. The `panth_recently_viewed` and `panth_produ
 
 ## License
 
-Commercial software license. See [LICENSE.txt](LICENSE.txt) in this repository.
+Free and open source under the MIT License. See [LICENSE.txt](LICENSE.txt).
 
 ## Changelog
 
